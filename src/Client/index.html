@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Elevator Control System</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+      padding: 15px;
+      background-color: #f0f2f5;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    h1 {
+      color: #1a1a1a;
+      margin-bottom: 5px;
+      font-size: 24px;
+    }
+
+    h2 {
+      color: #333;
+      margin: 0 0 10px 0;
+      font-size: 18px;
+    }
+
+    h3 {
+      color: #555;
+      margin: 0 0 8px 0;
+      font-size: 16px;
+    }
+
+    .control-panel {
+      background: white;
+      border: 2px solid #333;
+      border-radius: 6px;
+      padding: 12px;
+      margin-bottom: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    .form-group {
+      margin-bottom: 8px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 3px;
+      font-weight: 600;
+      color: #333;
+      font-size: 13px;
+    }
+
+    input[type="number"] {
+      width: 100%;
+      padding: 6px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      font-size: 14px;
+    }
+
+    select {
+      width: 100%;
+      padding: 6px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      font-size: 14px;
+    }
+
+    button {
+      background-color: #007bff;
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 600;
+      transition: background-color 0.2s;
+    }
+
+    button:hover {
+      background-color: #0056b3;
+    }
+
+    button:disabled {
+      background-color: #ccc;
+      cursor: not-allowed;
+    }
+
+    .direction-radio {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .direction-radio label {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      margin-bottom: 0;
+      cursor: pointer;
+      font-weight: normal;
+    }
+
+    .direction-radio input[type="radio"] {
+      cursor: pointer;
+    }
+
+    .message {
+      padding: 8px;
+      margin: 10px 0;
+      border-radius: 4px;
+      background-color: #d4edda;
+      border: 1px solid #c3e6cb;
+      color: #155724;
+      font-size: 13px;
+    }
+
+    .message.error {
+      background-color: #f8d7da;
+      border: 1px solid #f5c6cb;
+      color: #721c24;
+    }
+
+    .elevators-list {
+      background: white;
+      border: 2px solid #333;
+      border-radius: 6px;
+      padding: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    .elevator-card {
+      background: #f8f9fa;
+      border: 1px solid #dee2e6;
+      border-radius: 6px;
+      padding: 10px;
+      margin-bottom: 10px;
+    }
+
+    .elevator-card h3 {
+      color: #007bff;
+      margin-bottom: 8px;
+    }
+
+    .elevator-info {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+
+    .info-item {
+      background: white;
+      padding: 6px;
+      border-radius: 4px;
+      border: 1px solid #e0e0e0;
+    }
+
+    .info-label {
+      font-weight: 600;
+      color: #666;
+      font-size: 11px;
+      text-transform: uppercase;
+      margin-bottom: 2px;
+    }
+
+    .info-value {
+      font-size: 15px;
+      color: #333;
+    }
+
+    .floor-list {
+      background: white;
+      padding: 6px;
+      border-radius: 4px;
+      border: 1px solid #e0e0e0;
+      min-height: 26px;
+    }
+
+    .floor-badge {
+      display: inline-block;
+      background: #007bff;
+      color: white;
+      padding: 2px 6px;
+      border-radius: 3px;
+      margin: 2px;
+      font-size: 12px;
+    }
+
+    .direction-up {
+      color: #28a745;
+      font-weight: bold;
+    }
+
+    .direction-down {
+      color: #dc3545;
+      font-weight: bold;
+    }
+
+    .next-floor {
+      background: #fff3cd;
+      border: 2px solid #ffc107;
+      padding: 6px;
+      border-radius: 4px;
+      margin-top: 8px;
+      font-weight: 600;
+      color: #856404;
+      font-size: 13px;
+    }
+
+    .actions {
+      display: flex;
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .inline-form {
+      display: flex;
+      gap: 8px;
+      align-items: flex-end;
+      flex-wrap: wrap;
+    }
+
+    .inline-form .form-group {
+      flex: 1;
+      min-width: 120px;
+      margin-bottom: 0;
+    }
+
+    .inline-form button {
+      flex-shrink: 0;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🏢 Elevator Control System</h1>
+
+    <div class="control-panel">
+      <h2>Create New Elevator</h2>
+      <form id="createElevatorForm" class="inline-form">
+        <button type="submit">Create Elevator</button>
+        <button type="button" id="refreshBtn" style="background-color: #28a745;">🔄 Refresh</button>
+      </form>
+    </div>
+
+    <div class="control-panel">
+      <h2>Elevator Operations</h2>
+      <form id="elevatorOperationForm">
+        <div class="form-group">
+          <label for="elevatorSelect">Select Elevator</label>
+          <select id="elevatorSelect" required>
+            <option value="1">Elevator 1</option>
+          </select>
+        </div>
+        <div style="display: flex; gap: 8px; align-items: flex-end;">
+          <div class="form-group" style="flex: 1; margin-bottom: 0;">
+            <label for="floorNumber">Floor Number</label>
+            <input type="number" id="floorNumber" required value="1">
+          </div>
+          <div class="form-group" style="flex: 1; margin-bottom: 0;">
+            <label style="margin-bottom: 3px;">Direction (for Call)</label>
+            <div class="direction-radio">
+              <label>
+                <input type="radio" name="direction" value="1" checked> ⬆️ Up
+              </label>
+              <label>
+                <input type="radio" name="direction" value="-1"> ⬇️ Down
+              </label>
+            </div>
+          </div>
+        </div>
+        <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-top: 8px;">
+          <button type="button" id="requestBtn">Request Floor</button>
+          <button type="button" id="callBtn">Call Elevator</button>
+          <button type="button" id="moveBtn">Move Elevator</button>
+          <button type="button" id="moveNextBtn" style="background-color: #28a745;">Move to Next</button>
+        </div>
+      </form>
+    </div>
+
+    <div id="message"></div>
+
+    <div class="elevators-list">
+      <h2>Current Elevator States</h2>
+      <div id="elevatorsList">
+        <p style="color: #666;">No elevators created yet. Create an elevator to get started.</p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const BASE_URL = 'http://localhost:8080';
+
+    // Show message to user
+    function showMessage(text, isError = false) {
+      const messageDiv = document.getElementById('message');
+      messageDiv.textContent = text;
+      messageDiv.className = isError ? 'message error' : 'message';
+      messageDiv.style.display = 'block';
+      setTimeout(() => {
+        messageDiv.style.display = 'none';
+      }, 5000);
+    }
+
+    // Update elevator dropdown
+    function updateElevatorDropdown(elevators) {
+      const select = document.getElementById('elevatorSelect');
+      const currentValue = select.value || '1';
+      
+      if (elevators.length === 0) {
+        select.innerHTML = '<option value="1">Elevator 1</option>';
+        return;
+      }
+      
+      select.innerHTML = elevators.map(e => 
+        `<option value="${e.id}">Elevator ${e.id} (Floor ${e.currentFloor})</option>`
+      ).join('');
+      
+      // Restore selection if still valid, otherwise default to first or 1
+      if (elevators.some(e => e.id.toString() === currentValue)) {
+        select.value = currentValue;
+      } else if (elevators.length > 0) {
+        select.value = elevators[0].id.toString();
+      }
+    }
+
+    // Refresh elevator list
+    async function refreshElevators() {
+      try {
+        const response = await fetch(`${BASE_URL}/api/elevators`);
+        if (!response.ok) throw new Error('Failed to fetch elevators');
+        
+        const elevators = await response.json();
+        const listDiv = document.getElementById('elevatorsList');
+        
+        // Update dropdown
+        updateElevatorDropdown(elevators);
+        
+        if (elevators.length === 0) {
+          listDiv.innerHTML = '<p style="color: #666;">No elevators created yet. Create an elevator to get started.</p>';
+          return;
+        }
+
+        // Get next floor for each elevator
+        const elevatorsWithNext = await Promise.all(elevators.map(async (elevator) => {
+          try {
+            const nextResponse = await fetch(`${BASE_URL}/api/elevators/${elevator.id}/next`);
+            if (nextResponse.ok) {
+              const nextData = await nextResponse.json();
+              return { ...elevator, nextFloor: nextData.nextFloor };
+            }
+          } catch (e) {
+            console.error(`Failed to get next floor for elevator ${elevator.id}`, e);
+          }
+          return { ...elevator, nextFloor: null };
+        }));
+
+        listDiv.innerHTML = elevatorsWithNext.map(elevator => `
+          <div class="elevator-card">
+            <h3>Elevator ${elevator.id}</h3>
+            <div class="elevator-info">
+              <div class="info-item">
+                <div class="info-label">Current Floor</div>
+                <div class="info-value">${elevator.currentFloor}</div>
+              </div>
+              <div class="info-item">
+                <div class="info-label">Direction</div>
+                <div class="info-value ${elevator.currentDirection === 1 ? 'direction-up' : 'direction-down'}">
+                  ${elevator.currentDirection === 1 ? '⬆️ Up' : '⬇️ Down'}
+                </div>
+              </div>
+              <div class="info-item">
+                <div class="info-label">Next Floor</div>
+                <div class="info-value" style="font-weight: bold; color: #ffc107;">
+                  ${elevator.nextFloor !== null ? `📍 ${elevator.nextFloor}` : '✅ None'}
+                </div>
+              </div>
+            </div>
+            <div class="info-item">
+              <div class="info-label">Floor Requests (Internal)</div>
+              <div class="floor-list">
+                ${elevator.floorRequests && elevator.floorRequests.length > 0 
+                  ? elevator.floorRequests.map(f => {
+                      const floorNum = typeof f === 'object' ? f.floor : f;
+                      return `<span class="floor-badge">${floorNum}</span>`;
+                    }).join('') 
+                  : '<span style="color: #999;">∅ Empty</span>'}
+              </div>
+            </div>
+            <div class="info-item">
+              <div class="info-label">Floor Calls (External)</div>
+              <div class="floor-list">
+                ${elevator.floorCalls && elevator.floorCalls.length > 0 
+                  ? elevator.floorCalls.map(fc => {
+                      let direction = '';
+                      if (fc.isUpCalled && fc.isDownCalled) {
+                        direction = '⬆️⬇️';
+                      } else if (fc.isUpCalled) {
+                        direction = '⬆️';
+                      } else if (fc.isDownCalled) {
+                        direction = '⬇️';
+                      }
+                      return `<span class="floor-badge">${fc.floor} ${direction}</span>`;
+                    }).join('') 
+                  : '<span style="color: #999;">∅ Empty</span>'}
+              </div>
+            </div>
+          </div>
+        `).join('');
+      } catch (error) {
+        console.error('Error refreshing elevators:', error);
+        showMessage('Failed to refresh elevator list: ' + error.message, true);
+      }
+    }
+
+    // Create elevator
+    document.getElementById('createElevatorForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      try {
+        const response = await fetch(`${BASE_URL}/api/elevators`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' }
+        });
+        
+        if (!response.ok) throw new Error('Failed to create elevator');
+        
+        const result = await response.json();
+        await refreshElevators();
+        
+        const nextFloorResponse = await fetch(`${BASE_URL}/api/elevators/${result.id}/next`);
+        if (nextFloorResponse.ok) {
+          const nextData = await nextFloorResponse.json();
+          showMessage(`Created elevator ${result.id}. Next floor: ${nextData.nextFloor}`);
+        } else {
+          showMessage(`Created elevator ${result.id}. No next floor (no requests)`);
+        }
+      } catch (error) {
+        showMessage('Error creating elevator: ' + error.message, true);
+      }
+    });
+
+    // Request floor button
+    document.getElementById('requestBtn').addEventListener('click', async () => {
+      const elevatorId = document.getElementById('elevatorSelect').value;
+      const floor = document.getElementById('floorNumber').value;
+      
+      if (!elevatorId || !floor) {
+        showMessage('Please select an elevator and enter a floor number', true);
+        return;
+      }
+      
+      try {
+        const response = await fetch(`${BASE_URL}/api/elevators/${elevatorId}/request`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ floor: parseInt(floor) })
+        });
+        
+        if (!response.ok) throw new Error('Failed to request floor');
+        
+        await refreshElevators();
+        
+        const nextFloorResponse = await fetch(`${BASE_URL}/api/elevators/${elevatorId}/next`);
+        if (nextFloorResponse.ok) {
+          const nextData = await nextFloorResponse.json();
+          showMessage(`Requested floor ${floor}. Next floor: ${nextData.nextFloor}`);
+        } else {
+          showMessage(`Requested floor ${floor}. No next floor (no requests)`);
+        }
+      } catch (error) {
+        showMessage('Error requesting floor: ' + error.message, true);
+      }
+    });
+
+    // Call elevator button
+    document.getElementById('callBtn').addEventListener('click', async () => {
+      const elevatorId = document.getElementById('elevatorSelect').value;
+      const floor = document.getElementById('floorNumber').value;
+      const direction = parseInt(document.querySelector('input[name="direction"]:checked').value);
+      
+      if (!elevatorId || !floor) {
+        showMessage('Please select an elevator and enter a floor number', true);
+        return;
+      }
+      
+      try {
+        const response = await fetch(`${BASE_URL}/api/elevators/${elevatorId}/call`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ 
+            floor: parseInt(floor), 
+            direction: direction
+          })
+        });
+        
+        if (!response.ok) throw new Error('Failed to call elevator');
+        
+        await refreshElevators();
+        
+        const nextFloorResponse = await fetch(`${BASE_URL}/api/elevators/${elevatorId}/next`);
+        if (nextFloorResponse.ok) {
+          const nextData = await nextFloorResponse.json();
+          showMessage(`Called elevator to floor ${floor} going ${direction === 1 ? 'Up' : 'Down'}. Next floor: ${nextData.nextFloor}`);
+        } else {
+          showMessage(`Called elevator to floor ${floor} going ${direction === 1 ? 'Up' : 'Down'}. No next floor (no requests)`);
+        }
+      } catch (error) {
+        showMessage('Error calling elevator: ' + error.message, true);
+      }
+    });
+
+    // Move elevator button
+    document.getElementById('moveBtn').addEventListener('click', async () => {
+      const elevatorId = document.getElementById('elevatorSelect').value;
+      const floor = document.getElementById('floorNumber').value;
+      
+      if (!elevatorId || !floor) {
+        showMessage('Please select an elevator and enter a floor number', true);
+        return;
+      }
+      
+      try {
+        const response = await fetch(`${BASE_URL}/api/elevators/${elevatorId}/move`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ floor: parseInt(floor) })
+        });
+        
+        if (!response.ok) throw new Error('Failed to move elevator');
+        
+        await refreshElevators();
+        
+        const nextFloorResponse = await fetch(`${BASE_URL}/api/elevators/${elevatorId}/next`);
+        if (nextFloorResponse.ok) {
+          const nextData = await nextFloorResponse.json();
+          showMessage(`Moved elevator to floor ${floor}. Next floor: ${nextData.nextFloor}`);
+        } else {
+          showMessage(`Moved elevator to floor ${floor}. No next floor (no requests)`);
+        }
+      } catch (error) {
+        showMessage('Error moving elevator: ' + error.message, true);
+      }
+    });
+
+    // Move to next floor button
+    document.getElementById('moveNextBtn').addEventListener('click', async () => {
+      const elevatorId = document.getElementById('elevatorSelect').value;
+      
+      if (!elevatorId) {
+        showMessage('Please select an elevator', true);
+        return;
+      }
+      
+      try {
+        // Get next floor first
+        const nextFloorResponse = await fetch(`${BASE_URL}/api/elevators/${elevatorId}/next`);
+        if (!nextFloorResponse.ok) {
+          showMessage('No next floor to move to', true);
+          return;
+        }
+        
+        const nextData = await nextFloorResponse.json();
+        if (nextData.nextFloor === null) {
+          showMessage('No pending requests - no next floor to move to', true);
+          return;
+        }
+        
+        const nextFloor = nextData.nextFloor;
+        
+        // Move to that floor
+        const response = await fetch(`${BASE_URL}/api/elevators/${elevatorId}/move`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ floor: nextFloor })
+        });
+        
+        if (!response.ok) throw new Error('Failed to move elevator');
+        
+        await refreshElevators();
+        
+        const newNextFloorResponse = await fetch(`${BASE_URL}/api/elevators/${elevatorId}/next`);
+        if (newNextFloorResponse.ok) {
+          const newNextData = await newNextFloorResponse.json();
+          showMessage(`Moved to floor ${nextFloor}. Next floor: ${newNextData.nextFloor !== null ? newNextData.nextFloor : 'None'}`);
+        } else {
+          showMessage(`Moved to floor ${nextFloor}. No more pending requests`);
+        }
+      } catch (error) {
+        showMessage('Error moving to next floor: ' + error.message, true);
+      }
+    });
+
+    // Refresh button
+    document.getElementById('refreshBtn').addEventListener('click', async () => {
+      await refreshElevators();
+      showMessage('Elevator list refreshed');
+    });
+
+    // Initial load
+    refreshElevators();
+  </script>
+</body>
+</html>
