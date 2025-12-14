@@ -22,7 +22,8 @@ public class ElevatorRepository : IElevatorRepository
 
     public Task<Elevator> CreateAsync()
     {
-        var newElevator = new Elevator { Id = _nextId++, CurrentFloor = 1 };
+        var id = Interlocked.Increment(ref _nextId);
+        var newElevator = new Elevator { Id = id, CurrentFloor = 1 };
         _elevators[newElevator.Id] = newElevator;
         return Task.FromResult(newElevator);
     }

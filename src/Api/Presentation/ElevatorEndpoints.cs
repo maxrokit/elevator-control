@@ -37,11 +37,10 @@ public static class ElevatorEndpoints
 
         app.MapPost("/api/elevators/{id:int}/move", async (MoveToFloorCommandHandler handler, int id, FloorMoveRequest request) =>
         {
-            if (request == null) return Results.BadRequest();
-            await handler.HandleAsync(new MoveToFloorCommand(id, request.Floor));
-            return Results.Ok();
-        }).WithName("MoveElevator");
-
+            if (request == null) return Results.BadRequest("Request body required");
+            var ok = await handler.HandleAsync(new MoveToFloorCommand(id, request.Floor));
+            return ok ? Results.Ok() : Results.NotFound($"Elevator {id} not found");
+        });
 
         app.MapPost("/api/elevators/{id:int}/call", async (AddFloorCallCommandHandler handler, int id, FloorCallRequest request) =>
         {

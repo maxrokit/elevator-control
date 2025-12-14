@@ -8,19 +8,20 @@ using ElevatorControl.Api.Application.Handlers;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Configure Kestrel URL from environment or default to port 8080 for local testing
-var urls = Environment.GetEnvironmentVariable("ASPNETCORE_URLS") ?? "http://localhost:8080";
-builder.WebHost.UseUrls(urls);
-
 // Add minimal API support
 builder.Services.AddEndpointsApiExplorer();
 // Only add Swagger/OpenAPI generation in Development
 if (builder.Environment.IsDevelopment())
 {
+    // Configure Kestrel URL from environment or default to port 8080 for local testing0
+    var urls = Environment.GetEnvironmentVariable("ASPNETCORE_URLS") ?? "http://localhost:8080";
+    builder.WebHost.UseUrls(urls);
+
     builder.Services.AddSwaggerGen();
 }
 
 // Add CORS support for client applications
+// Allow any origin, method and header for simplicity in this example
 builder.Services.AddCors(options =>
 {
     options.AddDefaultPolicy(policy =>
@@ -67,5 +68,6 @@ if (app.Environment.IsDevelopment())
 
 // Map elevator endpoints from separate module
 app.MapElevatorEndpoints();
+app.MapHealthChecks("/health");
 
 app.Run();

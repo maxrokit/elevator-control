@@ -1,0 +1,49 @@
+Summary
+  Generated on: 12/14/2025 - 3:02:11 PM
+  Coverage date: 12/14/2025 - 3:01:57 PM
+  Parser: Cobertura
+  Assemblies: 1
+  Classes: 27
+  Files: 27
+  Line coverage: 80.3%
+  Covered lines: 327
+  Uncovered lines: 80
+  Coverable lines: 407
+  Total lines: 800
+  Branch coverage: 90% (72 of 80)
+  Covered branches: 72
+  Total branches: 80
+  Method coverage: 96.9% (63 of 65)
+  Full method coverage: 95.3% (62 of 65)
+  Covered methods: 63
+  Fully covered methods: 62
+  Total methods: 65
+
+Api                                                                            80.3%
+  ElevatorControl.Api.Application.Commands.AddFloorCallCommand                  100%
+  ElevatorControl.Api.Application.Commands.AddFloorDestinationCommand           100%
+  ElevatorControl.Api.Application.Commands.MoveToFloorCommand                   100%
+  ElevatorControl.Api.Application.DTOs.CreateElevatorResultDto                  100%
+  ElevatorControl.Api.Application.DTOs.ElevatorDto                              100%
+  ElevatorControl.Api.Application.DTOs.FloorCallDto                             100%
+  ElevatorControl.Api.Application.DTOs.FloorRequestDto                          100%
+  ElevatorControl.Api.Application.Handlers.AddFloorCallCommandHandler           100%
+  ElevatorControl.Api.Application.Handlers.AddFloorDestinationCommandHandler    100%
+  ElevatorControl.Api.Application.Handlers.CreateElevatorCommandHandler         100%
+  ElevatorControl.Api.Application.Handlers.GetElevatorsQueryHandler             100%
+  ElevatorControl.Api.Application.Handlers.GetFloorDestinationsQueryHandler     100%
+  ElevatorControl.Api.Application.Handlers.GetNextFloorQueryHandler             100%
+  ElevatorControl.Api.Application.Handlers.MoveToFloorCommandHandler            100%
+  ElevatorControl.Api.Application.Mappers.ElevatorMapper                        100%
+  ElevatorControl.Api.Application.Queries.GetFloorDestinationsQuery             100%
+  ElevatorControl.Api.Application.Queries.GetNextFloorQuery                     100%
+  ElevatorControl.Api.Application.Services.ElevatorRepository                   100%
+  ElevatorControl.Api.Application.Services.ElevatorService                      100%
+  ElevatorControl.Api.Domain.Entities.Elevator                                 99.1%
+  ElevatorControl.Api.Domain.Enums.ElevatorDirectionJsonConverter               100%
+  ElevatorControl.Api.Infrastructure.Repositories.ElevatorRepository            100%
+  ElevatorControl.Api.Presentation.Endpoints.ElevatorEndpoints                    0%
+  ElevatorControl.Api.Presentation.Models.FloorCallRequest                      100%
+  ElevatorControl.Api.Presentation.Models.FloorDestinationRequest               100%
+  ElevatorControl.Api.Presentation.Models.FloorMoveRequest                      100%
+  Program                                                                         0%

@@ -574,4 +574,205 @@ public class ElevatorTests
     }
 
     #endregion
+
+    #region Constructor Validation Tests
+
+    [Fact]
+    public void Constructor_ThrowsArgumentException_WhenMinFloorEqualsMaxFloor()
+    {
+        // Act & Assert
+        var ex = Assert.Throws<ArgumentException>(() => new Elevator(5, 5));
+        Assert.Contains("Minimum floor must be less than maximum floor", ex.Message);
+    }
+
+    [Fact]
+    public void Constructor_ThrowsArgumentException_WhenMinFloorGreaterThanMaxFloor()
+    {
+        // Act & Assert
+        var ex = Assert.Throws<ArgumentException>(() => new Elevator(10, 5));
+        Assert.Contains("Minimum floor must be less than maximum floor", ex.Message);
+    }
+
+    [Fact]
+    public void Constructor_AcceptsValidMinMaxFloors()
+    {
+        // Act
+        var elevator = new Elevator(minFloor: 0, maxFloor: 50);
+
+        // Assert
+        Assert.NotNull(elevator);
+    }
+
+    [Fact]
+    public void Constructor_UsesDefaultFloorRange_WhenNoParametersProvided()
+    {
+        // Act
+        var elevator = new Elevator { Id = 1, CurrentFloor = 1 };
+
+        // Assert - Should accept floors 1-100 (default range)
+        elevator.AddFloorDestination(1);
+        elevator.AddFloorDestination(100);
+        Assert.Contains(1, elevator.FloorDestinations);
+        Assert.Contains(100, elevator.FloorDestinations);
+    }
+
+    #endregion
+
+    #region Direction Validation Tests
+
+    [Fact]
+    public void AddFloorCall_ThrowsArgumentException_WhenCallingDownFromBottomFloor()
+    {
+        // Arrange
+        var elevator = new Elevator(minFloor: 1, maxFloor: 10) { Id = 1, CurrentFloor = 5 };
+
+        // Act & Assert
+        var ex = Assert.Throws<ArgumentException>(() => 
+            elevator.AddFloorCall(1, ElevatorDirection.Down));
+        Assert.Contains("Cannot call elevator to go down from the bottom floor (1)", ex.Message);
+    }
+
+    [Fact]
+    public void AddFloorCall_ThrowsArgumentException_WhenCallingUpFromTopFloor()
+    {
+        // Arrange
+        var elevator = new Elevator(minFloor: 1, maxFloor: 10) { Id = 1, CurrentFloor = 5 };
+
+        // Act & Assert
+        var ex = Assert.Throws<ArgumentException>(() => 
+            elevator.AddFloorCall(10, ElevatorDirection.Up));
+        Assert.Contains("Cannot call elevator to go up from the top floor (10)", ex.Message);
+    }
+
+    [Fact]
+    public void AddFloorCall_AcceptsUpCall_AtBottomFloor()
+    {
+        // Arrange
+        var elevator = new Elevator(minFloor: 1, maxFloor: 10) { Id = 1, CurrentFloor = 5 };
+
+        // Act
+        elevator.AddFloorCall(1, ElevatorDirection.Up);
+
+        // Assert
+        Assert.True(elevator.FloorCalls.ContainsKey(1));
+        Assert.True(elevator.FloorCalls[1].IsUpCalled);
+    }
+
+    [Fact]
+    public void AddFloorCall_AcceptsDownCall_AtTopFloor()
+    {
+        // Arrange
+        var elevator = new Elevator(minFloor: 1, maxFloor: 10) { Id = 1, CurrentFloor = 5 };
+
+        // Act
+        elevator.AddFloorCall(10, ElevatorDirection.Down);
+
+        // Assert
+        Assert.True(elevator.FloorCalls.ContainsKey(10));
+        Assert.True(elevator.FloorCalls[10].IsDownCalled);
+    }
+
+    [Fact]
+    public void AddFloorCall_WorksWithCustomFloorRange()
+    {
+        // Arrange - Building with floors -2 to 20
+        var elevator = new Elevator(minFloor: -2, maxFloor: 20) { Id = 1, CurrentFloor = 0 };
+
+        // Act & Assert - Bottom floor can only go up
+        var ex1 = Assert.Throws<ArgumentException>(() => 
+            elevator.AddFloorCall(-2, ElevatorDirection.Down));
+        Assert.Contains("Cannot call elevator to go down from the bottom floor (-2)", ex1.Message);
+
+        // Top floor can only go down
+        var ex2 = Assert.Throws<ArgumentException>(() => 
+            elevator.AddFloorCall(20, ElevatorDirection.Up));
+        Assert.Contains("Cannot call elevator to go up from the top floor (20)", ex2.Message);
+
+        // Valid calls should work
+        elevator.AddFloorCall(-2, ElevatorDirection.Up);
+        elevator.AddFloorCall(20, ElevatorDirection.Down);
+        Assert.True(elevator.FloorCalls[-2].IsUpCalled);
+        Assert.True(elevator.FloorCalls[20].IsDownCalled);
+    }
+
+    #endregion
+
+    #region Floor Validation with Custom Ranges Tests
+
+    [Fact]
+    public void AddFloorDestination_ThrowsArgumentOutOfRangeException_WhenFloorBelowMinimum()
+    {
+        // Arrange
+        var elevator = new Elevator(minFloor: 5, maxFloor: 20) { Id = 1, CurrentFloor = 10 };
+
+        // Act & Assert
+        var ex = Assert.Throws<ArgumentOutOfRangeException>(() => 
+            elevator.AddFloorDestination(3));
+        Assert.Contains("Floor must be between 5 and 20", ex.Message);
+    }
+
+    [Fact]
+    public void AddFloorDestination_ThrowsArgumentOutOfRangeException_WhenFloorAboveMaximum()
+    {
+        // Arrange
+        var elevator = new Elevator(minFloor: 5, maxFloor: 20) { Id = 1, CurrentFloor = 10 };
+
+        // Act & Assert
+        var ex = Assert.Throws<ArgumentOutOfRangeException>(() => 
+            elevator.AddFloorDestination(25));
+        Assert.Contains("Floor must be between 5 and 20", ex.Message);
+    }
+
+    [Fact]
+    public void AddFloorDestination_AcceptsFloor_WithinCustomRange()
+    {
+        // Arrange
+        var elevator = new Elevator(minFloor: 5, maxFloor: 20) { Id = 1, CurrentFloor = 10 };
+
+        // Act
+        elevator.AddFloorDestination(5);
+        elevator.AddFloorDestination(20);
+        elevator.AddFloorDestination(12);
+
+        // Assert
+        Assert.Contains(5, elevator.FloorDestinations);
+        Assert.Contains(20, elevator.FloorDestinations);
+        Assert.Contains(12, elevator.FloorDestinations);
+    }
+
+    [Fact]
+    public void AddFloorCall_ThrowsArgumentOutOfRangeException_WhenFloorOutsideCustomRange()
+    {
+        // Arrange
+        var elevator = new Elevator(minFloor: 0, maxFloor: 15) { Id = 1, CurrentFloor = 5 };
+
+        // Act & Assert - Below minimum
+        var ex1 = Assert.Throws<ArgumentOutOfRangeException>(() => 
+            elevator.AddFloorCall(-1, ElevatorDirection.Up));
+        Assert.Contains("Floor must be between 0 and 15", ex1.Message);
+
+        // Above maximum
+        var ex2 = Assert.Throws<ArgumentOutOfRangeException>(() => 
+            elevator.AddFloorCall(16, ElevatorDirection.Down));
+        Assert.Contains("Floor must be between 0 and 15", ex2.Message);
+    }
+
+    [Fact]
+    public void MoveToFloor_ThrowsArgumentOutOfRangeException_WhenFloorOutsideCustomRange()
+    {
+        // Arrange
+        var elevator = new Elevator(minFloor: 10, maxFloor: 30) { Id = 1, CurrentFloor = 15 };
+
+        // Act & Assert - Below minimum
+        var ex1 = Assert.Throws<ArgumentOutOfRangeException>(() => 
+            elevator.MoveToFloor(5));
+        Assert.Contains("Floor must be between 10 and 30", ex1.Message);
+
+        // Above maximum
+        var ex2 = Assert.Throws<ArgumentOutOfRangeException>(() => 
+            elevator.MoveToFloor(35));
+        Assert.Contains("Floor must be between 10 and 30", ex2.Message);
+    }
+
+    #endregion
 }

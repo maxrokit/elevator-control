@@ -6,11 +6,13 @@ namespace ElevatorControl.Api.Application.Handlers;
 
 public class AddFloorDestinationCommandHandler
 {
+    private readonly ILogger<AddFloorDestinationCommandHandler> _logger;
     private readonly IElevatorRepository _repository;
 
-    public AddFloorDestinationCommandHandler(IElevatorRepository repository)
+    public AddFloorDestinationCommandHandler(IElevatorRepository repository, ILogger<AddFloorDestinationCommandHandler> logger)
     {
         _repository = repository;
+        _logger = logger;
     }
 
     public async Task<bool> HandleAsync(AddFloorDestinationCommand command)
@@ -19,6 +21,10 @@ public class AddFloorDestinationCommandHandler
         if (elevator == null) return false;
 
         elevator.AddFloorDestination(command.Floor);
+
+        _logger.LogInformation("Added floor destination {Floor} to elevator {Id}",
+            command.Floor, command.ElevatorId);
+
         return true;
     }
 }

@@ -17,21 +17,11 @@ public class ElevatorDirectionJsonConverter : JsonConverter<ElevatorDirection>
             return value == 1 ? ElevatorDirection.Up : ElevatorDirection.Down;
         }
 
-        if (reader.TokenType == JsonTokenType.String)
-        {
-            var stringValue = reader.GetString();
-            if (!string.IsNullOrEmpty(stringValue))
-            {
-                return Enum.Parse<ElevatorDirection>(stringValue, ignoreCase: true);
-            }
-        }
-
         throw new JsonException($"Unable to convert value to ElevatorDirection");
     }
 
     public override void Write(Utf8JsonWriter writer, ElevatorDirection value, JsonSerializerOptions options)
     {
-        // Write as string for responses (Up/Down)
-        writer.WriteStringValue(value.ToString());
+        writer.WriteNumberValue((int)value); // 1 or -1
     }
 }
